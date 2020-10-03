@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { Icon, Container } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
 class Header extends React.Component {
   render() {
     return (
@@ -10,16 +11,15 @@ class Header extends React.Component {
           <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20 }}>
             <View >
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: 'white', fontSize: 35 }}>฿ 3000</Text>
+                <Text style={{ color: 'white', fontSize: 35, fontWeight: 'bold' }}>฿ {this.props.amount}</Text>
                 <Ionicons name='ios-arrow-dropup' size={35} color={'#7AF235'} style={{ marginLeft: 10, marginTop: 3 }} />
               </View>
-              <Text style={{ color: 'lightgrey', fontSize: 15 }}>Avaliable Balance</Text>
+              <Text style={{ color: '#ECF0EA', fontSize: 15, marginTop: 5 }}>Avaliable Balance</Text>
             </View>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')}>
               <Image
                 style={{ width: 55, height: 55, marginTop: 10 }}
                 source={require('../assets/profile.png')}
-
               />
             </TouchableOpacity>
           </View>
@@ -31,9 +31,10 @@ class Header extends React.Component {
 }
 
 const HeaderContainer = {
-  backgroundColor: '#1742B2',
+  backgroundColor: 'tomato',
   height: 150,
-  borderRadius: 25,
+  borderBottomLeftRadius: 25,
+  borderBottomRightRadius: 25,
   display: 'flex',
   justifyContent: 'center',
 }
