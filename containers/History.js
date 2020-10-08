@@ -20,16 +20,37 @@ class History extends React.Component {
     this.props.getList()
   }
 
-  getAmountUse = (list) => {
-    if (list.length === 0) {
-      return
+  getAmountUse = (list, filterType, filterList, selectedDate, dateList) => {
+    if (selectedDate === formatDate(new Date())) {
+      if (renderList(list, filterType, filterList).length === 0) {
+        return
+      } else {
+        let amoutuse = 0;
+        renderList(list, filterType, filterList).map(item => {
+          amoutuse = amoutuse + item.amount
+        })
+        return amoutuse
+      }
     } else {
-      let amoutuse = 0;
-      list.map(item => {
-        amoutuse = amoutuse + item.amount
-      })
-      return amoutuse
+      if (renderList(dateList, filterType, filterDateList).length === 0) {
+        return
+      } else {
+        let amoutuse = 0;
+        renderList(dateList, filterType, filterDateList).map(item => {
+          amoutuse = amoutuse + item.amount
+        })
+        return amoutuse
+      }
     }
+    // if (list.length === 0) {
+    //   return
+    // } else {
+    //   let amoutuse = 0;
+    //   list.map(item => {
+    //     amoutuse = amoutuse + item.amount
+    //   })
+    //   return amoutuse
+    // }
   }
 
   render() {
@@ -39,7 +60,7 @@ class History extends React.Component {
         refreshControl={
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
         }>
-        <Header amountUse={this.getAmountUse(list)} />
+        <Header amountUse={this.getAmountUse(list, filterType, filterList, this.props.selectedDate, this.props.dateList)} />
         <View style={{ marginHorizontal: 20 }}>
           <View>
             <View style={{ marginTop: 10, display: 'flex', flexDirection: 'row' }}>

@@ -7,10 +7,8 @@ import Rootreducer from './reducers/index'
 export default function App() {
   const store = createStore(Rootreducer, applyMiddleware(thunk))
   return (
-
     <Provider store={store}>
       <Routes />
-
     </Provider>
   );
 }
