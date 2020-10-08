@@ -32,28 +32,8 @@ class Barchart extends React.PureComponent {
     const data = {
       labels: ['Transport', 'Food', 'Dessert', 'Other'],
       datasets: [{
-        data: [
-          50,
-          20,
-          2,
-          86,
-        ],
+        data: this.props.data,
         color: (opacity = 1) => `rgba(100, 232, 35, ${opacity})` // optional
-      }, {
-        data: [
-          20,
-          10,
-          4,
-          56,
-        ]
-      }, {
-        data: [
-          30,
-          90,
-          67,
-          54,
-
-        ]
       }]
     }
 

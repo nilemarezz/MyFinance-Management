@@ -37,14 +37,7 @@ class LineChartComponent extends React.PureComponent {
     const data = {
       labels: labels,
       datasets: [{
-        data: [
-          50,
-          20,
-          20,
-          86,
-          40,
-          10
-        ],
+        data: this.props.data,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})` // optional
       }]
     }

@@ -1,24 +1,49 @@
 import React from 'react'
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Picker, Item } from 'native-base';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Barchart from '../components/Barchart'
 import LineChart from '../components/LineChart'
+import { month } from '../utilities/month'
+import { connect } from 'react-redux'
+import { setAnalyze } from '../actions/Analyze'
+import { getData } from '../services/Analyze/getData'
+
 class Analyze extends React.Component {
+  state = { refreshing: false }
+  onRefresh = async () => {
+    this.setState({ refreshing: true })
+    setTimeout(() => { this.setState({ refreshing: false }) }, 1500)
+  }
+  componentDidMount() {
+    this.props.getData()
+  }
   render() {
     return (
-      <View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+        }
+      >
         <Header />
         <ScrollView >
-          <Barchart />
-          <LineChart />
+          <Barchart data={this.props.data.amountUsePerType} />
+          <LineChart data={this.props.data.amountUsePerDay} />
         </ScrollView>
-      </View>
+      </ScrollView>
     )
   }
 }
 
-export default Analyze
+const mapStateToProps = (state) => {
+  return { data: state.analyze }
+}
+export const mapDispatchToProps = (dispatch, ownProps) => ({
+  getData: async (value) => {
+    const dataList = await getData()
+    dispatch(setAnalyze(dataList))
+  }
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Analyze)
 
 
 const Header = () => {
@@ -26,19 +51,15 @@ const Header = () => {
     <Item picker underline style={{ marginHorizontal: 20, width: 300 }}>
       <Picker
         mode="dropdown"
-        iosIcon={<Ionicons name="ios-down" style={{ color: 'white' }} />}
         placeholderIconColor="white"
         style={{ color: 'white' }}
         placeholder="Select your SIM"
         placeholderStyle={{ color: "white" }}
       >
-        <Picker.Item label="Select Date" value="" />
-
-        {/* <Picker.Item label="Wallet" value="key0" />
-        <Picker.Item label="ATM Card" value="key1" />
-        <Picker.Item label="Debit Card" value="key2" />
-        <Picker.Item label="Credit Card" value="key3" />
-        <Picker.Item label="Net Banking" value="key4" /> */}
+        <Picker.Item label="Select Month" value="" />
+        {month.map(item => {
+          return <Picker.Item label={item.label} value={item.id} />
+        })}
       </Picker>
     </Item>
   </View>

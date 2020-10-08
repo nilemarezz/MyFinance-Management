@@ -3,8 +3,13 @@ import { View, ScrollView, SafeAreaView, Text } from 'react-native';
 import { formatDate } from '../utilities/formatDate'
 import { DatePicker } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { connect } from 'react-redux'
+import { setDate, setListDate } from '../actions/History'
+import { getListByDate } from '../services/History/getListByDate'
 const Header = (props) => {
+  const setDate = (newDate) => {
+    props.setDate(formatDate(newDate))
+  }
   return (
     <View style={{
       backgroundColor: 'tomato',
@@ -25,8 +30,9 @@ const Header = (props) => {
           timeZoneOffsetInMinutes={undefined}
           modalTransparent={false}
           animationType={"fade"}
-          placeHolderText={formatDate(new Date())}
+          placeHolderText={props.date}
           placeHolderTextStyle={{ color: "white", fontSize: 20 }}
+          onDateChange={setDate}
           textStyle={{ color: "white", fontSize: 20 }}
           androidMode={'spinner'}
           disabled={false}
@@ -40,5 +46,14 @@ const Header = (props) => {
     </View>
   )
 }
-
-export default Header
+const mapStateToProps = (state) => {
+  return { date: state.history.selectedDate }
+}
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  setDate: async (value) => {
+    dispatch(setDate(value))
+    const data = await getListByDate(value)
+    dispatch(setListDate(data))
+  }
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

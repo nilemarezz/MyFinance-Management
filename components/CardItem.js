@@ -9,13 +9,22 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback
 } from "react-native";
+import { connect } from 'react-redux'
+import { DeleteList } from '../services/History/deleteList'
+import { deletedList } from '../actions/History'
+import { addMonthlyAmount } from '../actions/Profile'
+import { AddMonthlyAmount } from '../services/Profile/addMonthlyAmount'
 class CardItemConponent extends React.Component {
-  state = { openModal: false, cardId: null }
+  state = { openModal: false, cardId: null, amount: null }
+  onDeletedList = (value, amount) => {
+    this.props.deleteList(value, amount)
+    this.setState({ openModal: false, cardId: null, amount: null })
+  }
   render() {
     return (
       <>
         <View>
-          <TouchableOpacity onLongPress={() => this.setState({ openModal: true, cardId: this.props.id })}>
+          <TouchableOpacity onLongPress={() => this.props.present ? this.setState({ openModal: true, cardId: this.props.id, amount: this.props.amount }) : null}>
             <Card style={{ borderRadius: 20 }}>
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 15, paddingRight: 5 }}>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -38,7 +47,10 @@ class CardItemConponent extends React.Component {
         </View>
         <View style={{ padding: 0, margin: 0 }}>
           <ModalComponent openModal={this.state.openModal} >
-            <ModalChildren setModal={(value) => this.setState({ openModal: value })} openModal={this.state.openModal} cardId={this.state.cardId} />
+            <ModalChildren setModal={(value) => this.setState({ openModal: value })} openModal={this.state.openModal} cardId={this.state.cardId}
+              amount={this.state.amount}
+              onDeletedList={this.onDeletedList}
+              present={this.props.present} />
           </ModalComponent>
         </View>
       </>
@@ -46,7 +58,16 @@ class CardItemConponent extends React.Component {
   }
 }
 
-export default CardItemConponent
+export const mapDispatchToProps = (dispatch, ownProps) => ({
+  deleteList: async (value, amount) => {
+    await DeleteList(value)
+    await AddMonthlyAmount(amount)
+    dispatch(deletedList(value));
+    dispatch(addMonthlyAmount(amount))
+  }
+});
+
+export default connect(null, mapDispatchToProps)(CardItemConponent)
 
 const ModalChildren = (props) => {
   return (
@@ -57,12 +78,14 @@ const ModalChildren = (props) => {
         <View style={styles.modalView}>
 
           <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: "#b83b5e" }}
+            style={{ ...styles.openButton, backgroundColor: props.present ? "red" : "grey" }}
+            onPress={() => props.onDeletedList(props.cardId, props.amount)}
           >
             <Ionicons name="ios-trash" style={{ color: 'white', paddingHorizontal: 10 }} size={30} />
           </TouchableHighlight>
           <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: "#00334e" }}
+            style={{ ...styles.openButton, backgroundColor: "grey" }}
+            disabled
           >
             <Ionicons name="ios-create" style={{ color: 'white', paddingHorizontal: 5 }} size={30} />
           </TouchableHighlight>

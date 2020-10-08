@@ -1,0 +1,17 @@
+[{
+  "id": 2,
+  "type": "Dessert",
+  "subType": "Dinner",
+  "amount": -20,
+  "time": "10:30",
+  "date": "8/10/2020"
+},
+{
+  "id": 20,
+  "type": "Food",
+  "subType": "Dinner",
+  "amount": -50,
+  "time": "16:30",
+  "date": "8/10/2020"
+}
+]
