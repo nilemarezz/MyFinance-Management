@@ -8,22 +8,25 @@ import Header from '../components/HistoryHeader'
 import { getHistoryList } from '../services/History/getHistoryService'
 import { renderList } from '../utilities/renderList'
 import { formatDate } from '../utilities/formatDate'
+import * as SQLite from 'expo-sqlite';
+import { formatData } from '../utilities/formatDatafromDB.js'
+const db = SQLite.openDatabase("db.db");
 class History extends React.Component {
   state = { refreshing: false }
   onRefresh = async () => {
     this.setState({ refreshing: true })
-    this.props.getList()
+    this.props.getList(db)
     this.props.setDate(formatDate(new Date()))
     setTimeout(() => { this.setState({ refreshing: false }) }, 1500)
   }
   componentDidMount() {
-    this.props.getList()
+    this.props.getList(db)
   }
 
-  getAmountUse = (list, filterType, filterList, selectedDate, dateList) => {
+  getAmountUse = (list, filterType, filterList, selectedDate, dateList, filterDateList) => {
     if (selectedDate === formatDate(new Date())) {
-      if (renderList(list, filterType, filterList).length === 0) {
-        return
+      if (renderList(list, filterType, filterList) === null) {
+        return 0
       } else {
         let amoutuse = 0;
         renderList(list, filterType, filterList).map(item => {
@@ -32,8 +35,8 @@ class History extends React.Component {
         return amoutuse
       }
     } else {
-      if (renderList(dateList, filterType, filterDateList).length === 0) {
-        return
+      if (renderList(dateList, filterType, filterDateList) === null) {
+        return 0
       } else {
         let amoutuse = 0;
         renderList(dateList, filterType, filterDateList).map(item => {
@@ -42,25 +45,18 @@ class History extends React.Component {
         return amoutuse
       }
     }
-    // if (list.length === 0) {
-    //   return
-    // } else {
-    //   let amoutuse = 0;
-    //   list.map(item => {
-    //     amoutuse = amoutuse + item.amount
-    //   })
-    //   return amoutuse
-    // }
   }
 
   render() {
-    const { list, filterType, filterList, dateList, filterDateList } = this.props
+    const { list, filterType, filterList, dateList, filterDateList, selectedDate } = this.props
     return (
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
         }>
-        <Header amountUse={this.getAmountUse(list, filterType, filterList, this.props.selectedDate, this.props.dateList)} />
+
+        <Header amountUse={this.getAmountUse(list, filterType, filterList, this.props.selectedDate, this.props.dateList, filterDateList)}
+          selectedDate={selectedDate} db={db} />
         <View style={{ marginHorizontal: 20 }}>
           <View>
             <View style={{ marginTop: 10, display: 'flex', flexDirection: 'row' }}>
@@ -110,14 +106,17 @@ export const mapStateToProps = (state) => {
   }
 }
 export const mapDispatchToProps = (dispatch, ownProps) => ({
-  getList: async () => {
-    const value = await getHistoryList()
-    dispatch(getList(value));
+  getList: async (db) => {
+    await getHistoryList(db, formatDate(new Date()), async (response) => {
+      let data = await formatData(response)
+      await dispatch(getList(data));
+    })
   },
   filterListByType: async (value) => {
     dispatch(setFilter(value))
   },
   setDate: async (value) => {
+    console.log(value)
     dispatch(setDate(value))
   }
 });

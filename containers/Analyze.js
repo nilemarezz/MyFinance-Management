@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import { Picker, Item } from 'native-base';
 import Barchart from '../components/Barchart'
 import LineChart from '../components/LineChart'

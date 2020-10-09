@@ -8,6 +8,11 @@ import { connect } from 'react-redux'
 import { setFilterRecent, getList } from '../actions/History'
 import { getHistoryList } from '../services/History/getHistoryService'
 import { renderList } from '../utilities/renderList'
+import { formatData } from '../utilities/formatDatafromDB.js'
+import { formatDate } from '../utilities/formatDate'
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("db.db");
+
 const AddButton = {
   shadowColor: "#000",
   shadowOffset: {
@@ -29,8 +34,9 @@ const AddButton = {
 class Home extends React.Component {
   state = { refreshing: false }
   componentDidMount() {
-    this.props.getList()
+    this.props.getList(db)
   }
+
   onRefresh = async () => {
     this.setState({ refreshing: true })
     this.props.getList()
@@ -91,9 +97,11 @@ const mapStateToProps = (state) => {
   return { profile: state.profile, list: state.history }
 }
 export const mapDispatchToProps = (dispatch, ownProps) => ({
-  getList: async () => {
-    const value = await getHistoryList()
-    dispatch(getList(value));
+  getList: async (db) => {
+    await getHistoryList(db, formatDate(new Date()), async (response) => {
+      let data = await formatData(response)
+      await dispatch(getList(data));
+    })
   },
   filterListByType: async (value) => {
     dispatch(setFilterRecent(value))
