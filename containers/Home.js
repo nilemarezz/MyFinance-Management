@@ -11,6 +11,7 @@ import { renderList } from '../utilities/renderList'
 import { formatData } from '../utilities/formatDatafromDB.js'
 import { formatDate } from '../utilities/formatDate'
 import * as SQLite from 'expo-sqlite';
+import { getAmountList } from '../services/Profile/getAmount'
 const db = SQLite.openDatabase("db.db");
 
 const AddButton = {
@@ -35,11 +36,14 @@ class Home extends React.Component {
   state = { refreshing: false }
   componentDidMount() {
     this.props.getList(db)
-  }
+    this.props.setAmount(db)
+
+  };
+
 
   onRefresh = async () => {
     this.setState({ refreshing: true })
-    this.props.getList()
+    this.props.getList(db)
     setTimeout(() => { this.setState({ refreshing: false }) }, 1500)
   }
 
@@ -105,6 +109,11 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   filterListByType: async (value) => {
     dispatch(setFilterRecent(value))
+  },
+  setAmount: async (db) => {
+    await getAmountList(db, async (response) => {
+      await dispatch({ type: "SET_MONTHLY_AMOUNT", payload: response })
+    })
   }
 });
 

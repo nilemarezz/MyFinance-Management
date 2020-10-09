@@ -8,6 +8,10 @@ import { AddListService } from '../services/History/addList'
 import { addList } from '../actions/History'
 import { minusMonthlyAmount } from '../actions/Profile'
 import { MinusMonthlyAmount } from '../services/Profile/minusMonthlyAmount'
+import { formatDate } from '../utilities/formatDate'
+import { formatTime } from '../utilities/formatTime'
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("db.db");
 class Add extends Component {
 
   state = {
@@ -30,8 +34,10 @@ class Add extends Component {
       type: this.state.type,
       subType: this.state.subType,
       description: this.state.description,
-      amount: negamount
-    })
+      amount: negamount,
+      date: formatDate(new Date()),
+      time: formatTime(new Date())
+    }, db)
 
     this.props.navigation.navigate('History')
   }
@@ -108,11 +114,12 @@ class Add extends Component {
 }
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
-  addListFunction: async (value) => {
-    const valueList = await AddListService(value)
-    await MinusMonthlyAmount(valueList.amount)
-    dispatch(addList(valueList));
-    dispatch(minusMonthlyAmount(valueList.amount))
+  addListFunction: async (data, db) => {
+    await MinusMonthlyAmount(data.amount, db)
+    await AddListService(db, data, async (response) => {
+      dispatch(addList(data));
+      dispatch(minusMonthlyAmount(data.amount))
+    })
   }
 });
 export default connect(null, mapDispatchToProps)(Add)

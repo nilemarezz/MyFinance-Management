@@ -16,6 +16,7 @@ export const setFilter = (value) => {
 }
 
 export const addList = (value) => {
+  console.log(value)
   return { type: ADD_LIST, payload: value }
 }
 

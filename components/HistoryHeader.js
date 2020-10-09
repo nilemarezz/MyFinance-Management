@@ -7,10 +7,12 @@ import { connect } from 'react-redux'
 import { setDate, setListDate } from '../actions/History'
 import { getListByDate } from '../services/History/getListByDate'
 import { formatData } from '../utilities/formatDatafromDB'
+import { getAmountList } from '../services/Profile/getAmount'
 const Header = (props) => {
   const setDate = (newDate) => {
     // console.log(newDate)
     props.setDate(formatDate(newDate), props.db)
+    props.setAmount(props.db)
   }
   const openDateSelect = useRef(null);
   return (
@@ -64,6 +66,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       await dispatch(setDate(value))
       await dispatch(setListDate(data))
     })
-  }
+  },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Header)

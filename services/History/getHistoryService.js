@@ -2,6 +2,7 @@ import HistoryList from '../../_mock_/HistoryList.json'
 export const getHistoryList = async (db, value, callback) => {
   await db.transaction(tx => {
     tx.executeSql(`select * from transactionlist`, [], (_, { rows }) => {
+      console.log(rows._array)
     }
     )
   })

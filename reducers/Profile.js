@@ -1,6 +1,6 @@
 import { MINUS_MONTHLY_AMOUNT, ADD_MONTHLY_AMOUNT } from '../actions/Profile'
 const initialState = {
-  amount: 3000
+  amount: 0
 };
 
 export default function (state = initialState, action) {
@@ -9,6 +9,8 @@ export default function (state = initialState, action) {
       return {
         amount: action.payload.Customer
       };
+    case "SET_MONTHLY_AMOUNT":
+      return { amount: action.payload }
     case MINUS_MONTHLY_AMOUNT:
       let minusOldAmount = state.amount
       return { ...state, amount: minusOldAmount + action.payload }

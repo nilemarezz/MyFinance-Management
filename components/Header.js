@@ -2,7 +2,8 @@ import React from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { Icon, Container } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("db.db");
 class Header extends React.Component {
   render() {
     return (

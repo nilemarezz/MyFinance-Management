@@ -17,17 +17,23 @@ export default function App() {
         transactiondate date , amount integer) ;`
       );
     });
+    db.transaction(tx => {
+      tx.executeSql(
+        `create table if not exists users (id integer PRIMARY KEY AUTOINCREMENT , userName varchar(50) , amount integer) ;`
+      );
+    });
     // db.transaction(tx => {
     //   tx.executeSql(
-    //     `delete from transactionlist where id = 1;`
+    //     `delete from users`
     //   );
     // });
-    // db.transaction(tx => {
-    //   tx.executeSql(
-    //     `insert into transactionlist (type , subtype , description , transactiondate , amount) 
-    //     values ("Dessert" , "Dinner" , "" , "10-8-2020 13:30:10" , -50)`
-    //   );
-    // });
+
+    db.transaction(tx => {
+      tx.executeSql(`insert into users (userName,amount) values ("Matas",3000)`, [], (_, { rows }) => {
+        console.log(rows.length)
+      }
+      )
+    })
   }, [])
   return (
     <Provider store={store}>
